@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  backend:
+    build: ./
+    container_name: backend-service
+    env_file:
+      - ./config/config.env
+    ports:
+      - 5001:5001
+    volumes:
+      - .:/app/src
