@@ -9,7 +9,7 @@ const hpp = require('hpp');
 
 const connectDB = require('./config/db');
 const hotels = require('./routes/hotels');
-const bookings = require('./route/bookings');
+const bookings = require('./routes/bookings');
 
 
 dotenv.config({ path: './config/config.env' });
