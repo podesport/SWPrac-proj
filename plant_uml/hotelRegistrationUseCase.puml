@@ -2,15 +2,18 @@
 left to right direction
 
 actor "User" as user
-rectangle "Hotel Registration System" as HotelRegistrationSystem {    
+rectangle "\t\t\t\tHotel Registration System\t\t\t\t" as HotelRegistrationSystem {    
     usecase "Register" as register
     usecase "Login" as login
     usecase "Logout" as logout
     usecase "View\nHotels" as viewHotels
     usecase "Create\nHotels" as createHotel
-    usecase "View\nBookings" as viewHBookings
+    usecase "Delete\nHotels" as deleteHotel
+    usecase "View\nBookings" as viewBookings
+    usecase "Create\nBooking" as createBooking
     usecase "Edit\nBooking" as editBooking
     usecase "Delete\nBooking" as deleteBooking
+    usecase "Get\nBooking PDF" as getBookingPDF
 }
 
 actor "Admin" as admin
@@ -21,9 +24,12 @@ user -- login
 user -- logout
 
 user -- viewHotels
-user -- viewHBookings
+
+user -- viewBookings
+user -- createBooking
 user -- editBooking
 user -- deleteBooking
+user -- getBookingPDF
 ' =====================
 
 register -- admin
@@ -32,8 +38,12 @@ logout -- admin
 
 viewHotels -- admin
 createHotel -- admin
-viewHBookings -- admin
+deleteHotel -- admin
+
+viewBookings -- admin
+createBooking -- admin
 editBooking -- admin
 deleteBooking -- admin
-
+getBookingPDF -- admin
+' =====================
 @enduml
