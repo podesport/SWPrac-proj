@@ -1,0 +1,39 @@
+@startuml Hotel Registration System Use Case Diagram
+left to right direction
+
+actor "User" as user
+rectangle "Hotel Registration System" as HotelRegistrationSystem {    
+    usecase "Register" as register
+    usecase "Login" as login
+    usecase "Logout" as logout
+    usecase "View\nHotels" as viewHotels
+    usecase "Create\nHotels" as createHotel
+    usecase "View\nBookings" as viewHBookings
+    usecase "Edit\nBooking" as editBooking
+    usecase "Delete\nBooking" as deleteBooking
+}
+
+actor "Admin" as admin
+
+
+user -- register
+user -- login
+user -- logout
+
+user -- viewHotels
+user -- viewHBookings
+user -- editBooking
+user -- deleteBooking
+' =====================
+
+register -- admin
+login -- admin
+logout -- admin
+
+viewHotels -- admin
+createHotel -- admin
+viewHBookings -- admin
+editBooking -- admin
+deleteBooking -- admin
+
+@enduml
