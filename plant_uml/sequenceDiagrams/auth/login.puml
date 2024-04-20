@@ -1,7 +1,6 @@
 @startuml Login (POST)
 
-header Hotel Registration Sequence Diagram
-footer Page %page% of %lastpage%
+' header Hotel Registration Sequence Diagram
 title "Login (POST)"
 
 participant "Client" as client

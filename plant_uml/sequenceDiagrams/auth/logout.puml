@@ -1,7 +1,6 @@
 @startuml Logout (GET)
 
-header Hotel Registration Sequence Diagram
-footer Page %page% of %lastpage%
+' header Hotel Registration Sequence Diagram
 title "Logout (GET)"
 
 participant "Client" as client
