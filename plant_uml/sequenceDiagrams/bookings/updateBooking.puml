@@ -1,7 +1,7 @@
-@startuml Create Booking
+@startuml Update Booking
 
 ' header Hotel Registration Sequence Diagram
-title "Create Booking (POST)"
+title "Update Booking (PUT)"
 
 participant "Client" as client
 participant "<<javaScript>>\n:server" as server
@@ -13,7 +13,7 @@ participant "<<controllers>>\n:bookings" as controllersBooking
 participant "<<model>>\n:Bookings" as modelBooking
 database "<<MongoDB>>\n:bookings" as BookingDatabase
 
-client->server ++:req.post('/bookings/:id')
+client->server ++:req.update('/bookings/:id')
 server->routerBookings ++:app.use('/bookings',bookings)
 
 routerBookings -> middlewareAuth ++: protect
@@ -25,8 +25,8 @@ deactivate modelUser
 routerBookings -> middlewareAuth: authorize("admin", "user")
 deactivate middlewareAuth
 
-routerBookings -> controllersBooking ++:createBooking(req.params.id)
-controllersBooking->modelBooking ++: findByIdAndDelete(req.params.id)
+routerBookings -> controllersBooking ++:updateBooking(req.params.id)
+controllersBooking->modelBooking ++: findByIdAndUpdate(req.params.id, req.body)
 modelBooking ->BookingDatabase ++: BookingSchema
 BookingDatabase --> modelBooking --: booking
 controllersBooking <-- modelBooking --: booking

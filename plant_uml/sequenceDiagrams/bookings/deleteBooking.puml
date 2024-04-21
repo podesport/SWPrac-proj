@@ -1,7 +1,7 @@
-@startuml Create Booking
+@startuml Delete Booking
 
 ' header Hotel Registration Sequence Diagram
-title "Create Booking (POST)"
+title "Delete Booking (DELETE)"
 
 participant "Client" as client
 participant "<<javaScript>>\n:server" as server
@@ -13,7 +13,7 @@ participant "<<controllers>>\n:bookings" as controllersBooking
 participant "<<model>>\n:Bookings" as modelBooking
 database "<<MongoDB>>\n:bookings" as BookingDatabase
 
-client->server ++:req.post('/bookings/:id')
+client->server ++:req.delete('/bookings/:id')
 server->routerBookings ++:app.use('/bookings',bookings)
 
 routerBookings -> middlewareAuth ++: protect
@@ -25,7 +25,7 @@ deactivate modelUser
 routerBookings -> middlewareAuth: authorize("admin", "user")
 deactivate middlewareAuth
 
-routerBookings -> controllersBooking ++:createBooking(req.params.id)
+routerBookings -> controllersBooking ++:deleteBooking(req.params.id)
 controllersBooking->modelBooking ++: findByIdAndDelete(req.params.id)
 modelBooking ->BookingDatabase ++: BookingSchema
 BookingDatabase --> modelBooking --: booking
