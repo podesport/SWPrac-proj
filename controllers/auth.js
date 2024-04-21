@@ -17,9 +17,9 @@ const sendTokenResponse = (user, statusCode, res) => {
     res.status(statusCode).cookie('token', token, options).json({  // CamelCased 'statusCode'
         success: true,
         // add fr frontend
-        // _id:user._id,
-        // name : user.name,
-        // email : user.email,
+        _id: user._id,
+        name : user.name,
+        email : user.email,
         token
     });
 }

@@ -15,7 +15,7 @@ const BookingSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    duration: {
+    room: {
         type: Number,
         required: true,
         min: 1,

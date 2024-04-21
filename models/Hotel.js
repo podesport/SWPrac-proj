@@ -13,9 +13,14 @@ const HotalSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please add a address"],
     },
-    tel: {
+    telephone :{
       type: String,
-    },
+      required: [true, 'Please add a telephone number'],
+      match: [
+        /^\+?(\d{1,3})?[-. ]?\(?\d{1,3}\)?[-. ]?\d{1,4}[-. ]?\d{1,4}[-. ]?\d{1,9}$/,
+        'Please add a valid telephone number'
+      ]
+    }
   },
   {
     toJSON: { virtuals: true },
