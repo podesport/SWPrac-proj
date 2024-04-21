@@ -1,0 +1,91 @@
+@startuml Hotel Booking System Class Diagram
+
+package "Hotel Booking System" {
+    ' Application
+    class "Hotel Booking Service" as HotelBookingService <<Application>> {
+
+    }
+
+    ' Resource
+    class "Hotels" as HotelsResource <<Resource>> {
+        <<GET>> +getHotels(): Hotel
+        <<POST>> +createHotel(): Hotel
+    }
+    class "Hotel" as HotelResource <<Resource>> {
+        <<GET>> +getHotel(): Hotel
+        <<PUT>> +updateHotel(): Hotel
+        <<DELETE>> +deleteHotel(): void
+    }
+    class "Bookings" as BookingsResource <<Resource>> {
+        <<GET>> +getBookings(): Booking
+        <<POST>> +createBooking(): Booking
+    }
+    class "Booking" as BookingResource <<Resource>> {
+        <<GET>> +getBooking(): Booking
+        <<PUT>> +updateBooking(): Booking
+        <<DELETE>> +deleteBooking(): void
+    }
+    class "Auth" as AuthResource <<Resource>> {
+
+    }
+    class "Register" as RegisterResource <<Resource>> {
+        <<POST>> +register(): User
+    }
+    class "Login" as LoginResource <<Resource>> {
+        <<POST>> +login(): User
+    }
+    class "Logout" as LogoutResource <<Resource>> {
+        <<GET>> +logout(): void
+    }
+
+    ' Representation
+    class "User" as UserRepresentation <<Representation>> {
+        - name
+        - telephone
+        - email
+        - role
+        - password
+        - createdAt
+    }
+    class "Hotel" as HotelRepresentation <<Representation>> {
+        - name
+        - address
+        - telephone
+    }
+    class "Booking" as BookingRepresentation <<Representation>> {
+        - user
+        - hotel
+        - bookingDate
+        - room
+        - createAt
+    }
+}
+
+' Relations
+' Application - Any
+HotelBookingService ..> HotelsResource : "api/v1/hotels <<Path>>"
+HotelBookingService ..> BookingsResource : "api/v1/bookings <<Path>>"
+HotelBookingService ..> AuthResource : "api/v1/auth <<Path>>"
+
+
+' Hotel - Hotel
+HotelsResource ..> HotelResource : "/{hotel_id} <<Path>>"
+HotelResource ..> HotelRepresentation : "<<use>>"
+
+
+' Booking - Hotel
+HotelResource ..> BookingsResource : "/bookings <<Path>>"
+
+' Booking - Booking
+BookingsResource ..> BookingResource : "/{booking_id} <<Path>>"
+BookingResource ..> BookingRepresentation : "<<use>>"
+
+
+' Auth - User
+AuthResource ..> RegisterResource : "/register <<Path>>"
+AuthResource ..> LoginResource : "/login <<Path>>"
+AuthResource ..> LogoutResource : "/logout <<Path>>"
+RegisterResource ..> UserRepresentation : "<<use>>"
+LoginResource ..> UserRepresentation : "<<use>>"
+
+@enduml
