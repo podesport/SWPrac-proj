@@ -1,0 +1,25 @@
+@startuml Create Hotel
+
+' header Hotel Registration Sequence Diagram
+title "Create Hotel (GET)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:hotels" as routerHotels
+participant "<<middleware>>\n:auth" as middlewareAuth
+participant "<<controllers>>\n:hotels" as controllersHotels
+participant "<<model>>\n:Hotels" as modelHotel
+participant "<<model>>\n:User" as modelUser
+database "<<MongoDB>>\n:hotels" as HotelDatabase
+database "<<MongoDB>>\n:users" as UserDatabase
+
+client->server ++:req.post('/hotels')
+server->routerHotels ++:app.use('/hotels',hotels)
+routerHotels -> controllersHotels ++:getHotels()
+controllersHotels->modelHotel ++: find()
+modelHotel ->HotelDatabase ++: HotelSchema
+HotelDatabase --> modelHotel --: hotel
+controllersHotels <-- modelHotel --:hotel
+controllersHotels->client --:response
+
+@enduml

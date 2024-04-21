@@ -1,3 +1,4 @@
+const jsPDF = require('jspdf');
 const Booking = require('../models/Booking');
 const Hotel = require('../models/Hotel');
 
