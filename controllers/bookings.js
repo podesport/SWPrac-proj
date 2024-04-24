@@ -72,9 +72,11 @@ exports.getBooking = async (req, res, next) => {
 //@access Private
 exports.createBooking = async (req, res, next) => {
     try {
-        const s = req.params.bookingID;
-        console.log(s)
+        // console.log(req.params.hotelID)
+        req.body.hotel = req.params.hotelID ;
+        // console.log(req.body)
         const hotel = await Hotel.findById(req.params.hotelID);
+
         if (!hotel) {
             return res.status(400).json({
                 succes: false,
@@ -83,34 +85,38 @@ exports.createBooking = async (req, res, next) => {
         }
 
         req.body.user = req.user.id
+        // console.log(req.body)
+        // const numberOfroom = req.body.room;
 
-        const numberOfroom = req.body.room;
+        // if (!numberOfroom) {
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: "Number of room is required for Booking."
+        //     });
+        // }
+        // if (numberOfroom < 1 || numberOfroom > 3) {
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: "The table number is invalid. Please choose between 1 and 3 tables."
+        //     });
+        // }
+        console.log(req.user);
+        const existedBooking = await Booking.find({user:req.user.id});
+        const CumulativeRoom = existedBooking.reduce((accumulator, booking) => accumulator + booking.room, 0);
 
-        if (!numberOfroom) {
-            return res.status(400).json({
-                success: false,
-                message: "Number of room is required for Booking."
-            });
-        }
-        if (numberOfroom < 1 || numberOfroom > 3) {
-            return res.status(400).json({
-                success: false,
-                message: "The table number is invalid. Please choose between 1 and 3 tables."
-            });
-        }
-
-        const existedBooking = await Booking.find({ user: req.user.id });
-        if (existedBooking) {
-            if (existedBooking.room + numberOfroom > 3 && req.user.role !== 'admin') {
+        if (existedBooking && existedBooking.length > 0) {
+            if (CumulativeRoom + numberOfroom > 3 && req.user.role !== 'admin'){
                 return res.status(400).json({
                     succes: false,
                     message: `User ID ${req.params.id} has 3 bookings ago and cannot bookings again.`
                 });
             }
-            const booking = Booking.findByIdAndUpdate(existedBooking._id, { room: existedBooking.room + numberOfroom }, {
-                new: true,
-                runValidators: true
-            });
+            // console.log(existedBooking._id)
+            const booking = await Booking.create(req.body);
+            // {
+            //     new:true,
+            //     runValidators : true
+            // });
             return res.status(200).json({
                 succes: true,
                 data: booking
@@ -122,7 +128,8 @@ exports.createBooking = async (req, res, next) => {
                 data: booking
             });
         }
-    } catch (err) {
+    }catch(err) {
+        // console.log(err)
         return res.status(500).json({
             success: false,
             message: "Cannot create booking"
@@ -158,8 +165,8 @@ exports.updateBooking = async (req, res, next) => {
             success: true,
             data: booking
         });
-    } catch (error) {
-        console.log(error);
+    }catch(error){
+        // console.log(error);
         return res.status(500).json({
             success: false,
             message: "Cannot update booking"
@@ -179,9 +186,8 @@ exports.deleteBooking = async (req, res, next) => {
                 message: `No booking with the id of ${req.params.id}`,
             });
         }
-
-        if (
-            booking.user.toString() !== req.user.id &&
+    
+        if (booking.user.toString() !== req.user.id &&
             req.user.role !== "admin"
         ) {
             return res.status(401).json({
@@ -189,7 +195,7 @@ exports.deleteBooking = async (req, res, next) => {
                 message: `User ${req.user.id} is not authorized to delete this booking`,
             });
         }
-
+        console.log(booking)
         await booking.remove();
         res.status(200).json({ success: true, data: {} });
     } catch (error) {
