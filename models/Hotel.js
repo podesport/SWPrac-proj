@@ -13,6 +13,19 @@ const HotalSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please add a address"],
     },
+    district: {
+      type: String,
+      required: [true, "Please add a district"],
+    },
+    province: {
+      type: String,
+      required: [true, "Please add a province"],
+    },
+    postalcode: {
+      type: String,
+      required: [true, "Please add a postalcode"],
+      maxlength: [5, "Postal Code can not be more than 5 digits"],
+    },
     telephone :{
       type: String,
       required: [true, 'Please add a telephone number'],
@@ -27,5 +40,7 @@ const HotalSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+
 
 module.exports = mongoose.model("Hotel", HotalSchema);
