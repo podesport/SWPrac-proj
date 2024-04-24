@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const HotalSchema = new mongoose.Schema(
+const HotelSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -41,6 +41,17 @@ const HotalSchema = new mongoose.Schema(
   }
 );
 
+HotelSchema.pre("deleteOne",
+  {
+    document: true,
+    query: false
+  },
+  async function (next) {
+    console.log(`Bookings being removed from hotel ${this._id}`);
+    await this.model("Booking").deleteMany({hotel: this._id});
+    next();
+  }
+)
 
 
-module.exports = mongoose.model("Hotel", HotalSchema);
+module.exports = mongoose.model("Hotel", HotelSchema);
