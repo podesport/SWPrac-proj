@@ -205,3 +205,30 @@ exports.deleteBooking = async (req, res, next) => {
             .json({ success: false, message: "Cannot delete booking" });
     }
 }
+
+
+exports.getBookingPDF = async (req, res, next) => {
+    try {
+        // const booking = await Booking.findById(req.params.id).populate({
+        //     path: 'hotel',
+        //     select: "name province telephone"
+        // })
+        console.log(req.params.id);
+        const booking = await Booking.findById(req.params.id);
+        if (!booking) {
+            return res.status(400).json({
+                succes: false,
+                message: `No booking with the id of ${req.params.id}`
+            });
+        }
+        res.status(200).json({
+            succes: true,
+            data: booking
+        })
+    } catch (err) {
+        return res.status(500).json({
+            succes: false,
+            message: "Can not find booking"
+        });
+    }
+}

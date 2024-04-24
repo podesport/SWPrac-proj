@@ -7,7 +7,7 @@ const {
     createBooking,
     updateBooking,
     deleteBooking,
-    // getBookingPDF
+    getBookingPDF
 } = require('../controllers/bookings')
 const { protect, authorize } = require('../middleware/auth');
 
