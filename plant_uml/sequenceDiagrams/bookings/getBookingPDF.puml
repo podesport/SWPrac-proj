@@ -1,0 +1,25 @@
+@startuml Get One Bookings PDF
+
+' header Hotel Registration Sequence Diagram
+title "Get One Bookings PDF (GET)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:bookings" as routerBookings
+participant "<<middleware>>\n:bookings" as middlewareAuth
+participant "<<controllers>>\n:bookings" as controllersBooking
+participant "<<model>>\n:Bookings" as modelBooking
+participant "<<model>>\n:User" as modelUser
+database "<<MongoDB>>\n:bookings" as BookingDatabase
+database "<<MongoDB>>\n:users" as UserDatabase
+
+client->server ++:req.get('/bookings/:id/pdf')
+server->routerBookings ++:app.use('/bookings',bookings)
+routerBookings -> controllersBooking ++:getBooking(req.params.id)
+controllersBooking->modelBooking ++: findById(req.params.id)
+modelBooking ->BookingDatabase ++: BookingSchema
+BookingDatabase --> modelBooking --: booking
+controllersBooking <-- modelBooking --: booking
+controllersBooking->client --:response
+
+@enduml
