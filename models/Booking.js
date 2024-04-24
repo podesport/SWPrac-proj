@@ -15,12 +15,6 @@ const BookingSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    room: {
-        type: Number,
-        required: true,
-        min: 1,
-        max: 3 // Maximum duration of 3 nights
-    },
     createAt: {
         type: Date,
         default: Date.now
