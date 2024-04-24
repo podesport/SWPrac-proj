@@ -50,6 +50,9 @@ package "Hotel Booking System" {
     class "Hotel" as HotelRepresentation <<Representation>> {
         - name
         - address
+        - district
+        - province
+        - postalcode
         - telephone
     }
     class "Booking" as BookingRepresentation <<Representation>> {
