@@ -1,0 +1,35 @@
+@startuml Update Booking
+
+' header Hotel Registration Sequence Diagram
+title "Update Booking (PUT)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:bookings" as routerBookings
+participant "<<middleware>>\n:auth" as middlewareAuth
+participant "<<model>>\n:User" as modelUser
+database "<<MongoDB>>\n:users" as UserDatabase
+participant "<<controllers>>\n:bookings" as controllersBooking
+participant "<<model>>\n:Bookings" as modelBooking
+database "<<MongoDB>>\n:bookings" as BookingDatabase
+
+client->server ++:req.update('/bookings/:id')
+server->routerBookings ++:app.use('/bookings',bookings)
+
+routerBookings -> middlewareAuth ++: protect
+middlewareAuth -> modelUser ++ : findById(user.id)
+modelUser -> UserDatabase ++: UserSchema
+UserDatabase --> modelUser --: user
+modelUser --> middlewareAuth: user
+deactivate modelUser
+routerBookings -> middlewareAuth: authorize("admin", "user")
+deactivate middlewareAuth
+
+routerBookings -> controllersBooking ++:updateBooking(req.params.id)
+controllersBooking->modelBooking ++: findByIdAndUpdate(req.params.id, req.body)
+modelBooking ->BookingDatabase ++: BookingSchema
+BookingDatabase --> modelBooking --: booking
+controllersBooking <-- modelBooking --: booking
+controllersBooking->client --:response
+
+@enduml

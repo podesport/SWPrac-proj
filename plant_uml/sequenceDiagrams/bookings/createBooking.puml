@@ -1,0 +1,35 @@
+@startuml Create Booking
+
+' header Hotel Registration Sequence Diagram
+title "Create Booking (POST)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:bookings" as routerBookings
+participant "<<middleware>>\n:auth" as middlewareAuth
+participant "<<model>>\n:User" as modelUser
+database "<<MongoDB>>\n:users" as UserDatabase
+participant "<<controllers>>\n:bookings" as controllersBooking
+participant "<<model>>\n:Bookings" as modelBooking
+database "<<MongoDB>>\n:bookings" as BookingDatabase
+
+client->server ++:req.post('/bookings/:id')
+server->routerBookings ++:app.use('/bookings',bookings)
+
+routerBookings -> middlewareAuth ++: protect
+middlewareAuth -> modelUser ++ : findById(user.id)
+modelUser -> UserDatabase ++: UserSchema
+UserDatabase --> modelUser --: user
+modelUser --> middlewareAuth: user
+deactivate modelUser
+routerBookings -> middlewareAuth: authorize("admin", "user")
+deactivate middlewareAuth
+
+routerBookings -> controllersBooking ++:createBooking(req.params.id)
+controllersBooking->modelBooking ++: findByIdAndDelete(req.params.id)
+modelBooking ->BookingDatabase ++: BookingSchema
+BookingDatabase --> modelBooking --: booking
+controllersBooking <-- modelBooking --: booking
+controllersBooking->client --:response
+
+@enduml
