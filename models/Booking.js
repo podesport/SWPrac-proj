@@ -11,7 +11,11 @@ const BookingSchema = new mongoose.Schema({
         ref: 'Hotel',
         required: true
     },
-    bookingDate: {
+    startDate: {
+        type: Date,
+        required: true
+    },
+    endDate: {
         type: Date,
         required: true
     },

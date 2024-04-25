@@ -72,11 +72,7 @@ exports.getBooking = async (req, res, next) => {
 //@access Private
 exports.createBooking = async (req, res, next) => {
     try {
-        // console.log(req.params.hotelID)
-        req.body.hotel = req.params.hotelID ;
-        // console.log(req.body)
         const hotel = await Hotel.findById(req.params.hotelID);
-
         if (!hotel) {
             return res.status(400).json({
                 succes: false,
@@ -84,50 +80,54 @@ exports.createBooking = async (req, res, next) => {
             });
         }
 
-        req.body.user = req.user.id
-        // console.log(req.body)
-        // const numberOfroom = req.body.room;
+        const nights = req.body.nights;
+        if (!nights) {
+          throw "nights is required";
+        }
+        if (nights < 1 || nights > 3) {
+          return res.status(400).json({
+            success: false,
+            message: `The nights number is invalid`,
+          });
+        }
+        delete req.body.nights;
 
-        // if (!numberOfroom) {
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: "Number of room is required for Booking."
-        //     });
-        // }
-        // if (numberOfroom < 1 || numberOfroom > 3) {
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: "The table number is invalid. Please choose between 1 and 3 tables."
-        //     });
-        // }
-        console.log(req.user);
-        const existedBooking = await Booking.find({user:req.user.id});
-        const CumulativeRoom = existedBooking.reduce((accumulator, booking) => accumulator + booking.room, 0);
+        const startDate = new Date(req.body.startDate);
+        const endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + nights);
+        req.body.endDate = endDate;
+        req.body.user = req.user.id;
+        req.body.hotel = req.params.hotelID ;
 
-        if (existedBooking && existedBooking.length > 0) {
-            if (CumulativeRoom + numberOfroom > 3 && req.user.role !== 'admin'){
-                return res.status(400).json({
-                    succes: false,
-                    message: `User ID ${req.params.id} has 3 bookings ago and cannot bookings again.`
-                });
-            }
-            // console.log(existedBooking._id)
-            const booking = await Booking.create(req.body);
-            // {
-            //     new:true,
-            //     runValidators : true
-            // });
-            return res.status(200).json({
-                succes: true,
-                data: booking
+        const cumulativeBooking = await Booking.find({user:req.user.id});
+        const existingBookings = await Booking.find({
+            user:req.user.id,
+            hotel: req.params.hotelID,
+            $or: [
+                { startDate: { $lt: endDate }, endDate: { $gt: startDate } },
+            ]
+        });
+
+        if (existingBookings.length > 0) {
+            return res.status(400).json({
+                succes: false,
+                message: `There is already a booking that overlaps with these dates.`
             });
-        } else {
-            const booking = await Booking.create(req.body)
-            return res.status(200).json({
-                succes: true,
-                data: booking
+        } 
+
+        if (cumulativeBooking  >= 3 && req.user.role !== 'admin'){
+            return res.status(400).json({
+                succes: false,
+                message: `User ID ${req.params.id} has 3 bookings ago and cannot bookings again.`
             });
         }
+
+        const booking = await Booking.create(req.body);
+        return res.status(200).json({
+            succes: true,
+            data: booking
+        });      
+    
     }catch(err) {
         // console.log(err)
         return res.status(500).json({
@@ -196,7 +196,7 @@ exports.deleteBooking = async (req, res, next) => {
             });
         }
         console.log(booking)
-        await booking.remove();
+        await booking.deleteOne();
         res.status(200).json({ success: true, data: {} });
     } catch (error) {
         console.log(error);
