@@ -1,0 +1,30 @@
+@startuml Update Hotel
+
+header Hotel Registration Sequence Diagram
+title "Update Hotel (put)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:hotels" as routerHotels
+participant "<<middleware>>\n:auth" as middlewareAuth
+participant "<<controllers>>\n:hotels" as controllersHotel
+participant "<<model>>\n:Hotel" as modelHotel
+database "<<MongoDB>>\n:hotels" as Hoteldatabase
+
+client->server ++:req.put('/hotels'/:id)
+server->routerHotels ++:app.use('/hotels/:id', hotels)
+
+routerHotels -> middlewareAuth ++: protect
+routerHotels -> middlewareAuth: authorize("admin", "user")
+deactivate middlewareAuth
+
+routerHotels -> controllersHotel ++:updateHotel()
+controllersHotel->modelHotel ++:findById(req.params.id)
+controllersHotel->modelHotel ++:update(req.body)
+modelHotel ->HotelDatabase ++: HotelSchema
+HotelDatabase --> modelHotel --: hotel
+controllersHotel <-- modelHotel --:hotel
+controllersHotel->client --:response
+
+
+@enduml
