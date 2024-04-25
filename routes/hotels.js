@@ -11,11 +11,8 @@ const {
 const { protect, authorize } = require('../middleware/auth');
 
 
-router.route('/').get(getHotels).post(createHotel)
-router.route('/:id').get(getHotel).put(updateHotel).delete(deleteHotel)
-
-// router.route('/').get(getHotels).post(protect, authorize('admin'), createHotel)
-// router.route('/:id').get(getHotel).put(protect, authorize('admin'), updateHotel).delete(protect, authorize('admin'), deleteHotel)
+router.route('/').get(getHotels).post(protect, authorize('admin'), createHotel)
+router.route('/:id').get(getHotel).put(protect, authorize('admin'), updateHotel).delete(protect, authorize('admin'), deleteHotel)
 
 
 module.exports = router;
