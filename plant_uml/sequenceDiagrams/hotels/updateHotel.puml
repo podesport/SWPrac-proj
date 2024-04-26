@@ -1,7 +1,7 @@
 @startuml Update Hotel
 
 header Hotel Registration Sequence Diagram
-title "Update Hotel (put)"
+title "Update Hotel (PUT)"
 
 participant "Client" as client
 participant "<<javaScript>>\n:server" as server
@@ -21,10 +21,9 @@ deactivate middlewareAuth
 routerHotels -> controllersHotel ++:updateHotel()
 controllersHotel->modelHotel ++:findById(req.params.id)
 controllersHotel->modelHotel ++:update(req.body)
-modelHotel ->HotelDatabase ++: HotelSchema
+modelHotel -> HotelDatabase ++: HotelSchema
 HotelDatabase --> modelHotel --: hotel
 controllersHotel <-- modelHotel --:hotel
 controllersHotel->client --:response
-
 
 @enduml
