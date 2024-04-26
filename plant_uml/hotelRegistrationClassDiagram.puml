@@ -1,4 +1,6 @@
 @startuml Hotel Booking System Class Diagram
+left to right direction
+skinparam packageStyle rectangle
 
 package "Hotel Booking System" {
     ' Application
@@ -58,17 +60,17 @@ package "Hotel Booking System" {
     class "Booking" as BookingRepresentation <<Representation>> {
         - user
         - hotel
-        - bookingDate
-        - room
+        - startDate
+        - endDate
         - createAt
     }
 }
 
 ' Relations
 ' Application - Any
-HotelBookingService ..> HotelsResource : "api/v1/hotels <<Path>>"
-HotelBookingService ..> BookingsResource : "api/v1/bookings <<Path>>"
-HotelBookingService ..> AuthResource : "api/v1/auth <<Path>>"
+HotelBookingService ..> HotelsResource : "/hotels <<Path>>"
+HotelBookingService ..> BookingsResource : "/bookings <<Path>>"
+HotelBookingService ..> AuthResource : "/auth <<Path>>"
 
 
 ' Hotel - Hotel
