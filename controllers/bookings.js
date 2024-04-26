@@ -131,15 +131,15 @@ exports.createBooking = async (req, res, next) => {
             });
         }
 
-        if (cumulativeBooking >= 3 && req.user.role !== 'admin') {
+        if (cumulativeBooking.length >= 3 && req.user.role !== 'admin') {
             return res.status(400).json({
                 succes: false,
-                message: `User ID ${req.params.id} has 3 bookings ago and cannot bookings again.`
+                message: `User ID ${req.user.id} has 3 bookings ago and cannot bookings again.`
             });
         }
 
         const booking = await Booking.create(req.body);
-        return res.status(200).json({
+        return res.status(201).json({
             succes: true,
             data: booking
         });
