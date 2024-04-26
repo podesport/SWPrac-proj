@@ -8,6 +8,7 @@ rectangle "\t\t\t\tHotel Registration System\t\t\t\t" as HotelRegistrationSystem
     usecase "Logout" as logout
     usecase "View\nHotels" as viewHotels
     usecase "Create\nHotels" as createHotel
+    usecase "Edit\nHotels" as editHotel
     usecase "Delete\nHotels" as deleteHotel
     usecase "View\nBookings" as viewBookings
     usecase "Create\nBooking" as createBooking
@@ -38,6 +39,7 @@ logout -- admin
 
 viewHotels -- admin
 createHotel -- admin
+editHotel -- admin
 deleteHotel -- admin
 
 viewBookings -- admin
