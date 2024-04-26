@@ -49,10 +49,13 @@ exports.getBookings = async (req, res, next) => {
 //@access Public
 exports.getBooking = async (req, res, next) => {
     try {
+        console.log(req.params.id)
+        // console.log(Booking.findById(req.params.id))
         const booking = await Booking.findById(req.params.id).populate({
-            path: 'booking',
-            select: "name province tel"
-        })
+            path: 'hotel',
+            select: "name province telephone"
+        });
+        console.log(booking)
         if (!booking) {
             return res.status(400).json({
                 succes: false,
@@ -64,6 +67,7 @@ exports.getBooking = async (req, res, next) => {
             data: booking
         })
     } catch (err) {
+        console.log
         return res.status(500).json({
             succes: false,
             message: "Can not find booking"
@@ -112,6 +116,14 @@ exports.createBooking = async (req, res, next) => {
             ]
         });
 
+        let currentDate = new Date();
+        if (startDate < currentDate) {
+            return res.status(400).json({
+                succes: false,
+                message: `The start date is earlier than today.`
+            });
+        }
+
         if (existingBookings.length > 0) {
             return res.status(400).json({
                 succes: false,
@@ -147,18 +159,58 @@ exports.createBooking = async (req, res, next) => {
 exports.updateBooking = async (req, res, next) => {
     try {
         let booking = await Booking.findById(req.params.id);
-
+        
         if (!booking) {
             return res.status(404).json({
                 success: false,
                 message: `No booking with id of ${req.params.id}`
             });
         }
-        //Make sure user is the booking owner
+  
         if (booking.user.toString() !== req.user.id && req.user.role !== 'admin') {
             return res.status(401).json({
                 success: false,
                 message: `User ${req.user.id} is not authorized to update this appointment`
+            });
+        }
+
+        const nights = req.body.nights;
+        if (!nights) {
+          throw "nights is required";
+        }
+        if (nights < 1 || nights > 3) {
+          return res.status(400).json({
+            success: false,
+            message: `The nights number is invalid`,
+          });
+        }
+        delete req.body.nights;
+
+        const startDate = req.body.startDate ? new Date(req.body.startDate) : booking.startDate;
+        const endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + nights);
+        req.body.endDate = endDate;
+        
+        let currentDate = new Date();
+        if (startDate < currentDate) {
+            return res.status(400).json({
+                success: false,
+                message: `The start date cannot be earlier than today.`
+            });
+        }
+        const overlappingBookings = await Booking.find({
+            _id: { $ne: booking._id },
+            user: req.user.id,
+            hotel: booking.hotel.toString(),
+            $or: [
+                { startDate: { $lt: endDate }, endDate: { $gt: startDate } },
+            ]
+        });
+        console.log(overlappingBookings);
+        if (overlappingBookings.length > 0) {
+            return res.status(400).json({
+                success: false,
+                message: `There is already a booking that overlaps with these dates.`
             });
         }
         booking = await Booking.findByIdAndUpdate(req.params.id, req.body, {

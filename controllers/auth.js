@@ -105,5 +105,26 @@ exports.logout = async (req, res, next) => {
 exports.getMe = async (req, res, next) => {
   const user = await User.findById(req.user.id);
   res.status(200).json({ success: true, data: user });
-  // sendTokenResponse(user,200,res) ;
+  sendTokenResponse(user,200,res) ;
 }
+
+// @desc    Get current Logged in user
+// @route   POST /api/v1/auth/me
+// @access  Private
+exports.deleteUser = async (req, res, next) => {
+  try {
+    const user = req.params.id;
+    if (req.user.role !== 'admin') {
+      return res.status(401).json({ success: false, msg: `User ${req.user.id} is not authorized to delete this user` });
+    }
+
+    const userisremove = await User.findByIdAndDelete(user);
+    if (!userisremove) {
+      return res.status(404).json({ success: false, msg: "User not found" });
+    }
+    
+    res.status(200).json({ success: true, msg: "User was delete" });
+  } catch (err) {
+    return res.status(500).json({ success: false, msg: "Can not delete user" });
+  }
+};

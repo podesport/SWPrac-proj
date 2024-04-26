@@ -26,7 +26,7 @@ routerBookings -> middlewareAuth: authorize("admin", "user")
 deactivate middlewareAuth
 
 routerBookings -> controllersBooking ++:createBooking(req.params.id)
-controllersBooking->modelBooking ++: findByIdAndDelete(req.params.id)
+controllersBooking->modelBooking ++: findById(req.params.id)
 modelBooking ->BookingDatabase ++: BookingSchema
 BookingDatabase --> modelBooking --: booking
 controllersBooking <-- modelBooking --: booking
